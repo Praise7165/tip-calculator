@@ -39,14 +39,14 @@ label {
 }
 
 input {
-  color: var(--color-grey-500);
-  flex: 1;
+  color: var(--color-green-900);
   font-family: inherit;
   font-size: 2rem;
   border: none;
   outline: none;
   background-color: transparent;
   height: 100%;
+  field-sizing: content;
 }
 
 .tag {

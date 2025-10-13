@@ -1,5 +1,5 @@
 import "./App.css";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import DollarIcon from "./assets/icon-dollar.svg";
 import PersonIcon from "./assets/icon-person.svg";
 
@@ -17,9 +17,19 @@ function App() {
 }
 
 function InputModal() {
+  const [bill, setBill] = useState(0);
+  const [no, setNo] = useState(0);
+
   return (
     <form>
-      <Input label="Bill" isInput icon={DollarIcon} alt="Dollar icon" />
+      <Input
+        label="Bill"
+        isInput
+        icon={DollarIcon}
+        alt="Dollar icon"
+        i={bill}
+        onChange={(e) => setBill(Number(e.target.value))}
+      />
 
       <Input label="Select Tip %">
         <div class="tip_wrapper flex">
@@ -37,12 +47,14 @@ function InputModal() {
         isInput
         icon={PersonIcon}
         alt="Person icon"
+        i={no}
+        onChange={(e) => setNo(Number(e.target.value))}
       />
     </form>
   );
 }
 
-function Input({ label, children, isInput, icon, alt }) {
+function Input({ label, children, isInput, icon, alt, i, onChange }) {
   const inputRef = useRef();
 
   function handleClick() {
@@ -56,7 +68,13 @@ function Input({ label, children, isInput, icon, alt }) {
       {isInput ? (
         <div class="input flex rounded" onClick={handleClick}>
           <img src={icon} alt={alt} />
-          <input type="text" inputMode="numeric" dir="rtl" ref={inputRef} />
+          <input
+            type="text"
+            inputMode="numeric"
+            value={i}
+            onChange={onChange}
+            ref={inputRef}
+          />
         </div>
       ) : (
         children
