@@ -20,6 +20,13 @@ function InputModal() {
   const [bill, setBill] = useState(0);
   const [no, setNo] = useState(0);
 
+  function handleChange(e, f) {
+    let value = e.target.value;
+    value = value.replace(/[^0-9.]/g, "");
+
+    f(Number(value));
+  }
+
   return (
     <form>
       <Input
@@ -28,7 +35,7 @@ function InputModal() {
         icon={DollarIcon}
         alt="Dollar icon"
         i={bill}
-        onChange={(e) => setBill(Number(e.target.value))}
+        onChange={(e) => handleChange(e, setBill)}
       />
 
       <Input label="Select Tip %">
@@ -48,7 +55,7 @@ function InputModal() {
         icon={PersonIcon}
         alt="Person icon"
         i={no}
-        onChange={(e) => setNo(Number(e.target.value))}
+        onChange={(e) => handleChange(e, setNo)}
       />
     </form>
   );
