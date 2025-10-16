@@ -75,6 +75,16 @@ input {
   font-weight: 600;
 }
 
+.tag-input {
+  background-color: var(--color-grey-200);
+  color: var(--color-green-900);
+  font-weight: 600;
+  justify-content: flex-start;
+  font-size: 1rem;
+  flex: auto;
+  font-weight: 400;
+}
+
 form > div {
   margin-bottom: 2rem;
 }
@@ -102,9 +112,13 @@ form {
   justify-content: space-between;
 }
 
-.output p {
+.output .amount {
   font-size: 2.5rem;
   color: var(--color-green-400);
+}
+
+.dollar {
+  font-size: 1.5rem;
 }
 
 .output span {

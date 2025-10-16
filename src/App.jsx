@@ -4,22 +4,23 @@ import DollarIcon from "./assets/icon-dollar.svg";
 import PersonIcon from "./assets/icon-person.svg";
 
 function App() {
-  return (
-    <div className="section">
-      <div className="container flex">
-        <div className="calculator flex rounded-lg">
-          <InputModal />
-          <OutputModal />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function InputModal() {
   const [bill, setBill] = useState(0);
   const [no, setNo] = useState(1);
   const [tip, setTip] = useState(0);
+
+  const tipAmount = (tip / 100) * bill;
+
+  // handle tip amount per person calculation
+  let tipAmountPerPerson, totalBillPerPerson;
+
+  if (no === 0) {
+    [tipAmountPerPerson, totalBillPerPerson] = [0, 0];
+  } else {
+    [tipAmountPerPerson, totalBillPerPerson] = [
+      tipAmount / no,
+      (bill + tipAmount) / no,
+    ];
+  }
 
   function handleChange(e, f) {
     let value = e.target.value;
@@ -30,10 +31,64 @@ function InputModal() {
     f(Number(value));
   }
 
+  // handle bill change
+  function handleBillChange(e) {
+    handleChange(e, setBill);
+  }
+
+  // handle no of people change
+  function handleNoChange(e) {
+    handleChange(e, setNo);
+  }
+
+  // handle tip input
   function handleTipSelect(percent) {
     setTip(Number(percent));
   }
 
+  function handleTipChange(e) {
+    handleChange(e, setTip);
+  }
+
+  function handleReset() {
+    setBill(0);
+    setNo(1);
+    setTip("");
+  }
+
+  return (
+    <div className="section">
+      <div className="container flex">
+        <div className="calculator flex rounded-lg">
+          <InputModal
+            bill={bill}
+            no={no}
+            tip={tip}
+            handleBillChange={handleBillChange}
+            handleNoChange={handleNoChange}
+            handleTipSelect={handleTipSelect}
+            onTipChange={handleTipChange}
+          />
+          <OutputModal
+            tipAmount={tipAmountPerPerson}
+            totalBill={totalBillPerPerson}
+            onReset={handleReset}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InputModal({
+  bill,
+  no,
+  tip,
+  handleBillChange,
+  handleNoChange,
+  handleTipSelect,
+  onTipChange,
+}) {
   return (
     <form>
       <Input
@@ -42,37 +97,17 @@ function InputModal() {
         icon={DollarIcon}
         alt="Dollar icon"
         i={bill}
-        onChange={(e) => handleChange(e, setBill)}
+        onChange={handleBillChange}
       />
 
       <Input label="Select Tip %">
         <div class="tip_wrapper flex">
-          <Tag
-            percent="5%"
-            selected={tip === 5}
-            onClick={() => handleTipSelect(5)}
-          />
-          <Tag
-            percent="10%"
-            selected={tip === 10}
-            onClick={() => handleTipSelect(10)}
-          />
-          <Tag
-            percent="15%"
-            selected={tip === 15}
-            onClick={() => handleTipSelect(15)}
-          />
-          <Tag
-            percent="25%"
-            selected={tip === 25}
-            onClick={() => handleTipSelect(25)}
-          />
-          <Tag
-            percent="50%"
-            selected={tip === 50}
-            onClick={() => handleTipSelect(50)}
-          />
-          <CustomTag />
+          <Tag percent={5} tip={tip} onClick={() => handleTipSelect(5)} />
+          <Tag percent={10} tip={tip} onClick={() => handleTipSelect(10)} />
+          <Tag percent={15} tip={tip} onClick={() => handleTipSelect(15)} />
+          <Tag percent={25} tip={tip} onClick={() => handleTipSelect(25)} />
+          <Tag percent={50} tip={tip} onClick={() => handleTipSelect(50)} />
+          <CustomTag tip={tip} onTipChange={onTipChange} />
         </div>
       </Input>
 
@@ -82,7 +117,7 @@ function InputModal() {
         icon={PersonIcon}
         alt="Person icon"
         i={no}
-        onChange={(e) => handleChange(e, setNo)}
+        onChange={handleNoChange}
       />
     </form>
   );
@@ -122,7 +157,8 @@ function Input({ label, children, isInput, icon, alt, i, onChange }) {
   );
 }
 
-function Tag({ percent, onClick, selected }) {
+function Tag({ percent, onClick, tip }) {
+  const selected = percent === tip;
   return (
     <span
       className="tag flex rounded"
@@ -136,40 +172,57 @@ function Tag({ percent, onClick, selected }) {
           : {}
       }
     >
-      {percent}
+      {percent}%
     </span>
   );
 }
 
-function CustomTag() {
+function CustomTag({ tip, onTipChange }) {
   const [showInput, setInput] = useState(false);
 
+  const inputRef = useRef();
+
+  function handleShowInput() {
+    setInput(true);
+    inputRef.current.focus();
+
+    console.log(inputRef.current);
+  }
+
   return (
-    <div
-      onClick={() => setInput(!showInput)}
-      className={`${showInput && "input"}`}
-    >
+    <>
       {showInput ? (
-        <input type="text" inputMode="numeric" />
+        <input
+          className="tag tag-input flex rounded"
+          type="text"
+          inputMode="numeric"
+          value={tip}
+          onChange={onTipChange}
+          ref={inputRef}
+        />
       ) : (
-        <span className="tag flex rounded custom-tag">Custom</span>
+        <span className="tag flex rounded custom-tag" onClick={handleShowInput}>
+          Custom
+        </span>
       )}
-    </div>
+    </>
   );
 }
 
-function OutputModal() {
+function OutputModal({ tipAmount, totalBill, onReset }) {
   return (
     <div className="output flex rounded">
-      <TipAmount label="Tip Amount" />
-      <TipAmount label="Total" />
+      <TipAmount label="Tip Amount" amount={tipAmount} />
+      <TipAmount label="Total" amount={totalBill} />
 
-      <button className="rounded">RESET</button>
+      <button className="rounded" onClick={onReset}>
+        RESET
+      </button>
     </div>
   );
 }
 
-function TipAmount({ label }) {
+function TipAmount({ label, amount }) {
   return (
     <div className="flex">
       <span>
@@ -177,7 +230,10 @@ function TipAmount({ label }) {
         <br />
         <em className="per">/ person</em>
       </span>
-      <p className="amount">$0.00</p>
+      <p className="amount">
+        <strong className="dollar">$</strong>
+        {amount.toFixed(2)}
+      </p>
     </div>
   );
 }
