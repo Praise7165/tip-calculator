@@ -85,6 +85,10 @@ input {
   font-weight: 400;
 }
 
+.tag-input:focus {
+  border: 1.5px solid var(--color-grey-500);
+}
+
 form > div {
   margin-bottom: 2rem;
 }
