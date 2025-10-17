@@ -3,34 +3,27 @@ import { useRef, useState } from "react";
 import DollarIcon from "./assets/icon-dollar.svg";
 import PersonIcon from "./assets/icon-person.svg";
 
+function handleChange(e, f) {
+  let value = e.target.value;
+
+  // remove any word that is not a number
+  value = value.replace(/[^0-9.]/g, "");
+
+  f(Number(value));
+}
+
 function App() {
   const [bill, setBill] = useState(0);
   const [no, setNo] = useState(1);
   const [tip, setTip] = useState(0);
   const [showInput, setInput] = useState(false);
 
-  const tipAmount = (tip / 100) * bill;
+  const [billNum, peopleNum, tipPercent] = [bill || 0, no || 0, tip || 0];
 
-  // handle tip amount per person calculation
-  let tipAmountPerPerson, totalBillPerPerson;
+  const tipAmount =
+    peopleNum > 0 ? ((tipPercent / 100) * billNum) / peopleNum : 0;
 
-  if (no === 0) {
-    [tipAmountPerPerson, totalBillPerPerson] = [0, 0];
-  } else {
-    [tipAmountPerPerson, totalBillPerPerson] = [
-      tipAmount / no,
-      (bill + tipAmount) / no,
-    ];
-  }
-
-  function handleChange(e, f) {
-    let value = e.target.value;
-
-    // remove any word that is not a number
-    value = value.replace(/[^0-9.]/g, "");
-
-    f(Number(value));
-  }
+  const totalPerPerson = peopleNum > 0 ? billNum / peopleNum + tipAmount : 0;
 
   // handle bill change
   function handleBillChange(e) {
@@ -60,7 +53,7 @@ function App() {
   }
 
   function handleShowInput() {
-    setInput(true);
+    setInput((show) => !show);
   }
 
   return (
@@ -79,8 +72,8 @@ function App() {
             onShowInput={handleShowInput}
           />
           <OutputModal
-            tipAmount={tipAmountPerPerson}
-            totalBill={totalBillPerPerson}
+            tipAmount={tipAmount}
+            totalBill={totalPerPerson}
             onReset={handleReset}
           />
         </div>
@@ -196,15 +189,11 @@ function Tag({ percent, onClick, tip }) {
 function CustomTag({ showInput, onTipChange, onShowInput }) {
   const [inputTip, setInputTip] = useState("");
 
-  function handleChange(e) {
-    let value = e.target.value;
-
-    // remove any word that is not a number
-    value = value.replace(/[^0-9.]/g, "");
-
-    setInputTip(value);
+  function handleInputChange(e) {
+    handleChange(e, setInputTip);
     onTipChange(e);
   }
+
   return (
     <>
       {showInput ? (
@@ -213,8 +202,9 @@ function CustomTag({ showInput, onTipChange, onShowInput }) {
           type="text"
           inputMode="numeric"
           value={inputTip}
-          onChange={handleChange}
+          onChange={handleInputChange}
           autoFocus
+          onBlur={inputTip || onShowInput}
         />
       ) : (
         <span className="tag flex rounded custom-tag" onClick={onShowInput}>
