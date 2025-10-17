@@ -7,6 +7,7 @@ function App() {
   const [bill, setBill] = useState(0);
   const [no, setNo] = useState(1);
   const [tip, setTip] = useState(0);
+  const [showInput, setInput] = useState(false);
 
   const tipAmount = (tip / 100) * bill;
 
@@ -44,6 +45,7 @@ function App() {
   // handle tip input
   function handleTipSelect(percent) {
     setTip(Number(percent));
+    setInput(false);
   }
 
   function handleTipChange(e) {
@@ -54,6 +56,11 @@ function App() {
     setBill(0);
     setNo(1);
     setTip("");
+    setInput(false);
+  }
+
+  function handleShowInput() {
+    setInput(true);
   }
 
   return (
@@ -64,10 +71,12 @@ function App() {
             bill={bill}
             no={no}
             tip={tip}
+            showInput={showInput}
             handleBillChange={handleBillChange}
             handleNoChange={handleNoChange}
             handleTipSelect={handleTipSelect}
             onTipChange={handleTipChange}
+            onShowInput={handleShowInput}
           />
           <OutputModal
             tipAmount={tipAmountPerPerson}
@@ -84,10 +93,12 @@ function InputModal({
   bill,
   no,
   tip,
+  showInput,
   handleBillChange,
   handleNoChange,
   handleTipSelect,
   onTipChange,
+  onShowInput,
 }) {
   return (
     <form>
@@ -107,7 +118,12 @@ function InputModal({
           <Tag percent={15} tip={tip} onClick={() => handleTipSelect(15)} />
           <Tag percent={25} tip={tip} onClick={() => handleTipSelect(25)} />
           <Tag percent={50} tip={tip} onClick={() => handleTipSelect(50)} />
-          <CustomTag tip={tip} onTipChange={onTipChange} />
+          <CustomTag
+            tip={tip}
+            onTipChange={onTipChange}
+            showInput={showInput}
+            onShowInput={onShowInput}
+          />
         </div>
       </Input>
 
@@ -177,18 +193,18 @@ function Tag({ percent, onClick, tip }) {
   );
 }
 
-function CustomTag({ tip, onTipChange }) {
-  const [showInput, setInput] = useState(false);
+function CustomTag({ showInput, onTipChange, onShowInput }) {
+  const [inputTip, setInputTip] = useState("");
 
-  const inputRef = useRef();
+  function handleChange(e) {
+    let value = e.target.value;
 
-  function handleShowInput() {
-    setInput(true);
-    inputRef.current.focus();
+    // remove any word that is not a number
+    value = value.replace(/[^0-9.]/g, "");
 
-    console.log(inputRef.current);
+    setInputTip(value);
+    onTipChange(e);
   }
-
   return (
     <>
       {showInput ? (
@@ -196,12 +212,12 @@ function CustomTag({ tip, onTipChange }) {
           className="tag tag-input flex rounded"
           type="text"
           inputMode="numeric"
-          value={tip}
-          onChange={onTipChange}
-          ref={inputRef}
+          value={inputTip}
+          onChange={handleChange}
+          autoFocus
         />
       ) : (
-        <span className="tag flex rounded custom-tag" onClick={handleShowInput}>
+        <span className="tag flex rounded custom-tag" onClick={onShowInput}>
           Custom
         </span>
       )}
