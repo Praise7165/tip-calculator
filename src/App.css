@@ -39,6 +39,10 @@ label {
   border: 1.5px solid var(--color-grey-500);
 }
 
+.error {
+  border: 1.5px solid red;
+}
+
 .error:focus-within {
   border: 1.5px solid red;
 }
