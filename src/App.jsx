@@ -57,26 +57,32 @@ function App() {
   }
 
   return (
+    <Layout>
+      <InputModal
+        bill={bill}
+        no={no}
+        tip={tip}
+        showInput={showInput}
+        handleBillChange={handleBillChange}
+        handleNoChange={handleNoChange}
+        handleTipSelect={handleTipSelect}
+        onTipChange={handleTipChange}
+        onShowInput={handleShowInput}
+      />
+      <OutputModal
+        tipAmount={tipAmount}
+        totalBill={totalPerPerson}
+        onReset={handleReset}
+      />
+    </Layout>
+  );
+}
+
+function Layout({ children }) {
+  return (
     <div className="section">
       <div className="container flex">
-        <div className="calculator flex rounded-lg">
-          <InputModal
-            bill={bill}
-            no={no}
-            tip={tip}
-            showInput={showInput}
-            handleBillChange={handleBillChange}
-            handleNoChange={handleNoChange}
-            handleTipSelect={handleTipSelect}
-            onTipChange={handleTipChange}
-            onShowInput={handleShowInput}
-          />
-          <OutputModal
-            tipAmount={tipAmount}
-            totalBill={totalPerPerson}
-            onReset={handleReset}
-          />
-        </div>
+        <div className="calculator flex rounded-lg">{children}</div>
       </div>
     </div>
   );
