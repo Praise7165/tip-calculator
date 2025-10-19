@@ -4,6 +4,7 @@ import { handleChange } from "./components/handleChange";
 
 import Layout from "./components/Layout";
 import InputModal from "./components/InputModal";
+import OutputModal from "./components/OutputModal";
 
 function App() {
   const [bill, setBill] = useState(0);
@@ -38,14 +39,12 @@ function App() {
     handleChange(e, setTip);
   }
 
-  /*
   function handleReset() {
     setBill(0);
     setNo(1);
     setTip("");
-    setInput(false);
+    setShowInput(false);
   }
-  */
 
   function handleShowInput() {
     setShowInput((show) => !show);
@@ -65,45 +64,13 @@ function App() {
         onShowInput={handleShowInput}
       />
 
-      {/* 
       <OutputModal
         tipAmount={tipAmount}
         totalBill={totalPerPerson}
         onReset={handleReset}
-      /> 
-      */}
+      />
     </Layout>
   );
 }
 
-/*
-function OutputModal({ tipAmount, totalBill, onReset }) {
-  return (
-    <div className="output flex rounded">
-      <TipAmount label="Tip Amount" amount={tipAmount} />
-      <TipAmount label="Total" amount={totalBill} />
-
-      <button className="rounded" onClick={onReset}>
-        RESET
-      </button>
-    </div>
-  );
-}
-
-function TipAmount({ label, amount }) {
-  return (
-    <div className="flex">
-      <span>
-        {label}
-        <br />
-        <em className="per">/ person</em>
-      </span>
-      <p className="amount">
-        <strong className="dollar">$</strong>
-        {amount.toFixed(2)}
-      </p>
-    </div>
-  );
-}
-*/
 export default App;
