@@ -190,6 +190,11 @@ button {
   .calculator {
     max-width: none;
     padding-inline: 1.25rem;
+    padding-bottom: 0;
+  }
+
+  .output {
+    margin-inline: -1.25rem;
   }
 }
 
@@ -201,6 +206,9 @@ button {
 
   .calculator {
     flex-direction: column;
-    padding: 1rem;
+    padding-inline: 1rem;
+  }
+  .output {
+    margin-inline: -1rem;
   }
 }
