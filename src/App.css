@@ -145,6 +145,7 @@ button {
   font-weight: 600;
   font-size: 1.5rem;
   margin-top: auto;
+  color: var(--color-green-900);
 }
 
 .validity {
