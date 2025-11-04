@@ -1,6 +1,6 @@
 export default function Layout({ children }) {
   return (
-    <div className="section">
+    <main className="section">
       <div className="container flex">
         <div style={{ width: "100%", justifyItems: "center" }}>
           <h1
@@ -16,6 +16,6 @@ export default function Layout({ children }) {
           <div className="calculator flex rounded-lg">{children}</div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
